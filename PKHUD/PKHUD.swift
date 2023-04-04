@@ -116,15 +116,15 @@ open class PKHUD: NSObject {
 
     open var trailingMargin: CGFloat = 0
 
+    @_optimize(none)
     open func show(onView view: UIView? = nil) {
         let view: UIView = view ?? viewToPresentOn ?? UIApplication.shared.keyWindow!
-        if  !view.subviews.contains(container) {
-            view.addSubview(container)
-            container.frame.origin = CGPoint.zero
-            container.frame.size = view.frame.size
-            container.autoresizingMask = [ .flexibleHeight, .flexibleWidth ]
-            container.isHidden = true
-        }
+        show(onExistingView: view)
+    }
+    
+    @_optimize(none)
+    func show(onExistingView view: UIView) {
+        installViewInContainer(conatiner: container, view: view)
         if dimsBackground {
             container.showBackground(animated: true)
         }
@@ -138,13 +138,27 @@ open class PKHUD: NSObject {
             showContent()
         }
     }
+    
+    /// Just some factored out code to investigate a crash
+    @_optimize(none)
+    private func installViewInContainer(conatiner: UIView, view: UIView) {
+        if !view.subviews.contains(container) {
+            view.addSubview(container)
+            container.frame.origin = CGPoint.zero
+            container.frame.size = view.frame.size
+            container.autoresizingMask = [ .flexibleHeight, .flexibleWidth ]
+            container.isHidden = true
+        }
+    }
 
+    @inline(never)
     func showContent() {
         graceTimer?.invalidate()
         container.showFrameView()
         startAnimatingContentView()
     }
 
+    @inline(never)
     open func hide(animated anim: Bool = true, completion: TimerAction? = nil) {
         graceTimer?.invalidate()
 
@@ -177,12 +191,14 @@ open class PKHUD: NSObject {
         self.startAnimatingContentView()
     }
 
+    @inline(never)
     internal func startAnimatingContentView() {
         if let animatingContentView = contentView as? PKHUDAnimating, isVisible {
             animatingContentView.startAnimation()
         }
     }
 
+    @inline(never)
     internal func stopAnimatingContentView() {
         if let animatingContentView = contentView as? PKHUDAnimating {
             animatingContentView.stopAnimation?()

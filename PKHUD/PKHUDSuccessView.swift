@@ -22,15 +22,9 @@ open class PKHUDSuccessView: PKHUDSquareBaseView, PKHUDAnimating {
         layer.frame = CGRect(x: 3.0, y: 3.0, width: 88.0, height: 56.0)
         layer.path = checkmarkPath.cgPath
 
-        #if swift(>=4.2)
         layer.fillMode    = .forwards
         layer.lineCap     = .round
         layer.lineJoin    = .round
-        #else
-        layer.fillMode    = kCAFillModeForwards
-        layer.lineCap     = kCALineCapRound
-        layer.lineJoin    = kCALineJoinRound
-        #endif
 
         layer.fillColor   = nil
         layer.strokeColor = UIColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1.0).cgColor

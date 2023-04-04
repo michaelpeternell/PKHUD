@@ -55,16 +55,10 @@ open class PKHUD: NSObject {
 
     public override init () {
         super.init()
-
-        #if swift(>=4.2)
-        let notificationName = UIApplication.willEnterForegroundNotification
-        #else
-        let notificationName = NSNotification.Name.UIApplicationWillEnterForeground
-        #endif
-
+        
         NotificationCenter.default.addObserver(self,
             selector: #selector(PKHUD.willEnterForeground(_:)),
-            name: notificationName,
+            name: UIApplication.willEnterForegroundNotification,
             object: nil)
         userInteractionOnUnderlyingViewsEnabled = false
         container.frameView.autoresizingMask = [ .flexibleLeftMargin,
@@ -138,11 +132,7 @@ open class PKHUD: NSObject {
         // If the grace time is set, postpone the HUD display
         if gracePeriod > 0.0 {
             let timer = Timer(timeInterval: gracePeriod, target: self, selector: #selector(PKHUD.handleGraceTimer(_:)), userInfo: nil, repeats: false)
-            #if swift(>=4.2)
             RunLoop.current.add(timer, forMode: .common)
-            #else
-            RunLoop.current.add(timer, forMode: .commonModes)
-            #endif
             graceTimer = timer
         } else {
             showContent()
